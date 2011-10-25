@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<title>Testing Configure</title>
+	<style>
+	/* styles for test page */
+	* { margin: 0; padding: 0; }
+	body {
+		font-family: arial, sans-serif; font-size: 15px;
+		color: #000; background: #fff;
+	}
+	#body { margin: 2em; width: 70%; border: 1px solid silver; }
+	h1, h2, p, div { margin: 1em 0; padding: 0 15px; }
+	.test { margin: 10px 5px; padding: 0 10px; border: 1px solid silver; }
+	a { outline: 0; }
+	</style>
+
+</head>
+<body onload="configure.execute.runLocalNew();">
+	<div id="body">
+		<h1>Testing configure.js</h1>
+
+		<p>configure.js is a small library designed to retrieve configuration options from HTML elements within a page. It looks for any element with a class of 'dataconfig' and pulls out the text inside. It puts these options into a string which can be searched by custom functions to trigger behavior if a particular option is there.</p>
+		<p>For instance, a div with a class dataconfig can contain the words 'option1', 'option2', 'printonlymoduleA', etc. A function can be written to query if 'option1' is in the string; if so, the function can trigger an event, hide an HTML element, etc.</p>
+		<p>Any amount of dataconfig elements can appear on the page, and will be collected into the string configure.js stores. configure.js provides an empty object, configure.execute, to encapsulate custom functions written to query the 'mini-database' configure stores, avoiding namespace collisions.</p>
+		<p>Configure.js also supplies an inject() method that allows you to add items to the string. If you need to see what is in the configure string, you can run configure.data().</p>
+		<p>Configure.js converts all strings to lower-case, so 'option1' and 'Option1' will be identical within the configure string.</p>
+
+		<h2>Ways to reduce the javascript</h2>
+		<p>Obviously, pushing configure.js through a minimizer will help. In general, the usual 'script kiddie' tricks (placing an if statement on a single line, reducing variable declarations to a single character, etc) will not compact the code any more than it already is. However, if you really need more bang for the buck, eliminating the configure.debug function will save you almost half a kilobyte. You can also remove configure.getElementsByClass if you have a library that already has a similar function. Elminating configure.get will save a little more, but you will always have to sift through the configure.configOptions string manually in any function you write to access it, so it isn't recommended.</p>
+
+		<div id="test1" class="test">I am so test one.</div>
+		<div id="test2" class="test">I am so test two.</div>
+		<p>An inline link to <a href="javascript:configure.execute.runLocalLink();">test</a>.</p>
+
+		<p><a href="javascript:getStatus();">get status</a></p>
+
+		<p>The dataconfig elements on this page:</p>
+		<code><pre>
+<strong>&#60;div class="dataconfig"></strong>&#60;strong>grond&#60;/strong>&#60;!-- &#60;p class="pclass"><br />gr&#225;hh&#60;/p> opTion1  optiOn2	 camelCase<br />			 option3	  -->&#60;span>groovy &#60;!-- intag --> &#60;b>bold<br />&#60;!--- in-nested-tag -->&#60;/b>&#60;/span> looser<strong>&#60;/div></strong><br />
+<strong>&#60;div class="dataconfig"></strong>&#60;!--  foo bar ^&*@  urg gr)ond åçé<br /> 1 2  3 4	  5  --><strong>&#60;/div></strong><br />
+<strong>&#60;div class="dataconfig"></strong>&#60;!--  I'm a sentence. I'm another sentence;<br /> but with more words. --><strong>&#60;/div></strong>
+		</pre></code>
+
+
+		<div class="dataconfig"><strong>grond</strong><!-- <p class="pclass">gr&#225;hh</p> opTion1  optiOn2	 camelCase			 option3	  --><span>groovy <!-- intag --> <b>bold<!--- in-nested-tag --></b></span> looser</div>
+
+		<div class="dataconfig"><!--  foo bar ^&*@  urg gr)ond åçé 1 2  3 4	  5  --></div>
+		<div class="dataconfig"><!--  I'm a sentence. I'm another sentence; but with more words. --></div>
+
+	</div>
+
+	<!-- <script type="text/javascript" src="js/jquery-1.6.4.js"></script> -->
+	<script type="text/javascript" src="js/configure.1.0.min.js"></script>
+	<script type="text/javascript">
+	configure.execute.runLocalNew = function() {
+		if ( configure.get( 'option1' ) ) {
+			makeChanges( 'option1', 'test1', '#9999ff' );
+		}
+	};
+
+	configure.exe.runLocalLink = function() {
+		if ( configure.get( 'option2' ) ) {
+			makeChanges( 'option2', 'test2', '#ff6600' );
+		}
+	};
+
+	function makeChanges( value, id, color ) {
+		alert( "Dude, I'm so " + value );
+		var testOne = document.getElementById( id );
+		testOne.style.background = color;
+	}
+
+	function getStatus(){
+		alert(configure.data());
+	}
+	</script>
+</body>
+</html>
